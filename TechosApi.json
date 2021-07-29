@@ -1,0 +1,246 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "TechosApi",
+        "version": "1.0.0",
+        "description": "Gestion de Techos de gastos"
+    },
+    "paths": {
+        "/TechosAPI": {
+            "summary": "Techos presupuestarios",
+            "description": "Techos presupuestarios por Objetos del Gasto",
+            "servers": [
+                {
+                    "url": "http://localhost:8080/api",
+                    "description": "Servidor DevOps SEFIN"
+                }
+            ],
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GastoInstitucionDTO"
+                            },
+                            "examples": {
+                                "GastosInsDTO": {
+                                    "value": {
+                                        "Institucion": {
+                                            "codigo": 62,
+                                            "nombre": "some text",
+                                            "sigla": "some text",
+                                            "tipoAdmin": "some text"
+                                        },
+                                        "objetoGasto": {
+                                            "codigoObj": 90,
+                                            "nombre": "some text",
+                                            "grupoObjeto": 26,
+                                            "techoGlobal": 74
+                                        },
+                                        "monto": 48
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Techos"
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/Confirmacion"
+                    },
+                    "409": {
+                        "$ref": "#/components/responses/ManejoError"
+                    }
+                },
+                "summary": "Registrar",
+                "description": "Registrar techos"
+            },
+            "parameters": [
+                {
+                    "name": "contenido",
+                    "description": "Contenido tipo String",
+                    "schema": {
+
+                    },
+                    "in": "header"
+                }
+            ]
+        }
+    },
+    "components": {
+        "schemas": {
+            "Institucion": {
+                "description": "Instituciones de gobierno",
+                "required": [
+                    "codigo",
+                    "nombre",
+                    "tipoAdmin"
+                ],
+                "type": "object",
+                "properties": {
+                    "codigo": {
+                        "description": "Codigo de la Institucion",
+                        "type": "integer"
+                    },
+                    "nombre": {
+                        "description": "Nombre de la institucion",
+                        "type": "string"
+                    },
+                    "sigla": {
+                        "description": "Sigla de la institucion",
+                        "type": "string"
+                    },
+                    "tipoAdmin": {
+                        "description": "Tipo de Administración",
+                        "type": "string"
+                    }
+                }
+            },
+            "ObjetoGasto": {
+                "description": "Tipo de Objeto de gasto",
+                "required": [
+                    "codigoObj",
+                    "nombre",
+                    "techoGlobal"
+                ],
+                "type": "object",
+                "properties": {
+                    "codigoObj": {
+                        "description": "Codigo del Objeto del Gasto",
+                        "type": "integer"
+                    },
+                    "nombre": {
+                        "description": "Nombre del Objeto del Gasto",
+                        "type": "string"
+                    },
+                    "grupoObjeto": {
+                        "description": "Grupo al que pertenece el Objeto del Gasto",
+                        "type": "integer"
+                    },
+                    "techoGlobal": {
+                        "description": "Monto del techo Global",
+                        "type": "integer"
+                    }
+                }
+            },
+            "TotalTechos": {
+                "description": "Totalizar Techos por Objeto del Gasto",
+                "required": [
+                    "Institucion",
+                    "sumarizacion"
+                ],
+                "type": "object",
+                "properties": {
+                    "Institucion": {
+                        "description": "Total techos por Institución",
+                        "type": "integer"
+                    },
+                    "sumarizacion": {
+                        "description": "Sumarizacion de montos del Objeto",
+                        "type": "integer"
+                    }
+                }
+            },
+            "GastoInstitucionDTO": {
+                "description": "Formulacion del Gasto por Institución",
+                "required": [
+                    "Institucion",
+                    "objetoGasto",
+                    "monto"
+                ],
+                "type": "object",
+                "properties": {
+                    "Institucion": {
+                        "$ref": "#/components/schemas/Institucion",
+                        "description": "Instituciones que formulan PPTO"
+                    },
+                    "objetoGasto": {
+                        "$ref": "#/components/schemas/ObjetoGasto",
+                        "description": "Objetos de Gasto formulados"
+                    },
+                    "monto": {
+                        "description": "Monto formulado por Institución y Objeto",
+                        "type": "integer"
+                    }
+                }
+            },
+            "Mensaje": {
+                "description": "Mensaje de confirmacion",
+                "required": [
+                    "codigo",
+                    "mensaje"
+                ],
+                "type": "object",
+                "properties": {
+                    "codigo": {
+                        "description": "Codigo de mensaje respuesta",
+                        "type": "integer"
+                    },
+                    "mensaje": {
+                        "description": "Texto de mensaje respuesta",
+                        "type": "string"
+                    }
+                }
+            },
+            "Error": {
+                "description": "Mensaje de error",
+                "required": [
+                    "codigo",
+                    "excepcion"
+                ],
+                "type": "object",
+                "properties": {
+                    "codigo": {
+                        "description": "Codigo de error",
+                        "type": "integer"
+                    },
+                    "excepcion": {
+                        "description": "Excepción del error",
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "responses": {
+            "Confirmacion": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Mensaje"
+                        },
+                        "examples": {
+                            "Mensaje": {
+                                "value": {
+                                    "codigo": 7,
+                                    "mensaje": "Se confirma ingreso de presupuesto"
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Mensaje de Confirmacion"
+            },
+            "ManejoError": {
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Error"
+                        },
+                        "examples": {
+                            "Error1": {
+                                "value": {
+                                    "codigo": 27,
+                                    "excepcion": "Error para el techo"
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": "Manejo de error"
+            }
+        }
+    }
+}
